@@ -2,12 +2,14 @@
 #### Derivation of Stock Price 
 
 To start we let Stock Price $S_t$ at time $t$ evolve according to the following SDE (Samuelson):
+
 $$
 dS_t = \mu S_t dt + \sigma S_t dB_t, \quad S_0 = s_0
 $$
+
 with $\mu$ as the drift, $\sigma \geq 0$ the volatility, and $B_t$ the Brownian increment. This a GBM SDE so use the substitution $X_t = f(S_t) = ln(S_t)$, and applying Itô's Lemma:
 $$
-dX_t = (\,u - \frac{1}{2}\sigma^2)dt + \sigma dB_t \\
+dX_t = (\mu - \frac{1}{2}\sigma^2)dt + \sigma dB_t \\
 X_t - X_0 = (\mu - \frac{1}{2}\sigma^{2})t + \sigma B_t
 $$
 hence
