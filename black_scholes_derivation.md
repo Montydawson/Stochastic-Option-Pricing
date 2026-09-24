@@ -1,5 +1,5 @@
-## Option Pricing Example including derivation of Stock price 
-#### Derivation of Stock Price 
+# European Call pricing derivation 
+### Stock Price 
 
 To start we let Stock Price $S_t$ at time $t$ evolve according to the following SDE (Samuelson):
 
@@ -20,7 +20,7 @@ $$
 S_t = S_0 \exp((\mu - \frac{1}{2}\sigma^2)t + \sigma B_t)
 $$
 
-### Option Pricing
+## Option Pricing
  - **FTAP: The market is arbitrage free iff there exists a risk-neutral probability measure $\tilde{\mathbb{P}}$ under which discounted stock/asset prices are martingales.** <br>
 
 Following this one can conclude:
@@ -103,3 +103,72 @@ We finally obtain the Black-Scholes Merton formula:
 $$
 V_0 = S_0\Phi(d_1) - e^{-rT}K\Phi(d_2)
 $$
+
+Note this is for a non-dividend-paying stock.
+
+
+### Extending to dividend paying stock
+
+Suppose the stock pays a continuous dividend yield $q$, such that the dividend payment over the time period $[t,t+dt]$ is modelled as $qS_tdt$, where $q$ is a constant dividend yield. Also define the time remaining until maturity as:
+
+$$
+\tau:=T-t
+$$
+
+Where $\tau$ represents the fraction of a year remaining until maturity, so that is consistent with the other annualised parameters. Under the risk-neutral probability measure, the SDE must account for dividend payments such that:
+
+$$
+dS_t=(r-q)S_tdt+\sigma S_tdW_t
+$$
+
+where $W_t$ is Brownian motion under the risk-neutral probability measure. The solution between time $t$ and maturity $T$ is therefore:
+
+$$
+S_T=S_t\exp((r-q-\frac{1}{2}\sigma^2)\tau+\sigma(W_T-W_t))
+$$
+
+So the risk-neutral pricing equation for a European call becomes:
+
+$$
+V_t=e^{-r\tau}\mathbb{E}^{\tilde{\mathbb{P}}}\left[(S_T-K)^+\mid\mathcal{F}_t\right]
+$$
+
+similar to before. Also similarly we take
+
+$$
+\mu:=\ln(S_t)+(r-q-\frac{1}{2}\sigma^2)\tau
+$$
+
+$$
+Z(T):=\dfrac{\ln(S_T)-\mu}{\sigma\sqrt{\tau}}\sim\mathcal{N}(0,1)\quad \text{under} \; \tilde{\mathbb{P}}
+$$
+
+and hence:
+
+$$
+S_T=\exp(\mu+\sigma\sqrt{\tau}Z)
+$$
+
+Following the same steps as above, we obtain:
+
+$$
+\boxed{V_t=S_te^{-q\tau}\Phi(d_1)-Ke^{-r\tau}\Phi(d_2)}
+$$
+
+where:
+
+$$
+d_1:=\dfrac{\ln(\frac{S_t}{K})+(r-q+\frac{1}{2}\sigma^2)\tau}{\sigma\sqrt{\tau}}
+$$
+
+$$
+d_2:=\dfrac{\ln(\frac{S_t}{K})+(r-q-\frac{1}{2}\sigma^2)\tau}{\sigma\sqrt{\tau}}
+$$
+
+with:
+
+$$
+d_2=d_1-\sigma\sqrt{\tau}
+$$
+
+This is the Black-Scholes-Merton formula for a European call on a stock paying a continuous dividend yield $q$. Setting $q=0$ and $t=0$ gives the standard Black-Scholes-Merton formula above.
