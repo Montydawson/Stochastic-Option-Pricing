@@ -38,10 +38,10 @@ $$
 \Delta = e^{-q\tau}\Phi(d_1) + \frac{1}{\sigma \sqrt{\tau}}\left(e^{-q\tau}\phi(d_1) - e^{-r\tau}\frac{K}{S_t}\phi(d_2)\right)
 $$
 
-using the identity:
+using the identity $(1)$:
 
 $$
-S_te^{-q\tau}\phi(d_1) = Ke^{-r\tau}\phi(d_2) \tag{1}
+S_te^{-q\tau}\phi(d_1) = Ke^{-r\tau}\phi(d_2) 
 $$
 
 this simplifies nicely to:
@@ -118,7 +118,7 @@ $$
 $$
 
 $$
-\Theta = -\left\{-qS_te^{-q\tau}\Phi(d_1) + S_te^{-q\tau}\frac{\partial d_1}{\partial \tau}\phi(d_1) +rKe^{-r\tau}\Phi(d_2) - Ke^{-r\tau}\frac{\partial d_2}{\partial \tau}\phi(d_2)\right\}
+\Theta = -\left(-qS_te^{-q\tau}\Phi(d_1) + S_te^{-q\tau}\frac{\partial d_1}{\partial \tau}\phi(d_1) +rKe^{-r\tau}\Phi(d_2) - Ke^{-r\tau}\frac{\partial d_2}{\partial \tau}\phi(d_2)\right)
 $$
 
 $$
