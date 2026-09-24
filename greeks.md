@@ -41,7 +41,7 @@ $$
 using the identity:
 
 $$
-S_te^{-q\tau}\phi(d_1) = Ke^{-r\tau}\phi(d_2)
+S_te^{-q\tau}\phi(d_1) = Ke^{-r\tau}\phi(d_2) \tag{1}
 $$
 
 this simplifies nicely to:
@@ -87,7 +87,7 @@ $$
 \boxed{\Gamma = \dfrac{e^{-q\tau}}{S_t\sigma\sqrt{\tau}}\phi(d_1)}
 $$
 
-$\Gamma$ is positive for long options. This make sense because for calls: as $S_t$ increases so does $\Delta$ (from $0$ to $e^{-q\tau}$), and for puts: as $S_t$ increases so does $\Delta$ (from $-e^{-q\tau}$ to $0$). $\Gamma$ can be used in conjunction with $\Delta$ in Delta hedging as one may want to minimise $\Gamma$ such that the portfolio value is less sensitive to larger swings in the underlying asset price.
+$\Gamma$ is positive for standard vanilla options under Black-Scholes. This makes sense because for calls: as $S_t$ increases so does $\Delta$ (from $0$ to $e^{-q\tau}$), and for puts: as $S_t$ increases so does $\Delta$ (from $-e^{-q\tau}$ to $0$). $\Gamma$ can be used in conjunction with $\Delta$ in Delta hedging as one may want to minimise $\Gamma$ such that the portfolio value is less sensitive to larger swings in the underlying asset price.
 
 ## Vega
 
@@ -99,7 +99,7 @@ $$
 \nu = S_te^{-q\tau}\frac{\partial d_1}{\partial \sigma}\phi(d_1) - Ke^{-r\tau}\frac{\partial d_2}{\partial \sigma}\phi(d_2)
 $$
 
-and once again using the identity from above
+and once again using identity $(1)$ from above
 
 $$
 \nu = S_te^{-q\tau}\phi(d_1)\left(\frac{\partial d_1}{\partial \sigma} - \frac{\partial d_2}{\partial \sigma}\right)
@@ -117,5 +117,34 @@ $$
 \Theta := - \dfrac{\partial V}{\partial \tau}
 $$
 
+$$
+\Theta = -\left\{-qS_te^{-q\tau}\Phi(d_1) + S_te^{-q\tau}\frac{\partial d_1}{\partial \tau}\phi(d_1) +rKe^{-r\tau}\Phi(d_2) - Ke^{-r\tau}\frac{\partial d_2}{\partial \tau}\phi(d_2)\right\}
+$$
 
+$$
+\Theta = qS_te^{-q\tau}\Phi(d_1) - rKe^{-r\tau}\Phi(d_2) + S_te^{-q\tau}\phi(d_1)(\frac{\partial d_2}{\partial \tau} - \frac{\partial d_1}{\partial \tau})
+$$
 
+$$
+\boxed{\Theta = -e^{-q\tau}\dfrac{S_t\phi(d_1)\sigma}{2\sqrt{\tau}} + qS_te^{-q\tau}\Phi(d_1) - rKe^{-r\tau}\Phi(d_2)}
+$$
+
+By convention $\Theta$ is presented as the negative of the rate of change of the value with respect to the remaining time until expiry. This is because as time goes on $\tau$ decreases and the option typicaly loses value, so it is from the perspective of current time 'passed' increasing so as to convey the idea of value loss as time progresses. This is even clearer when using the chain rule and $\dot{\tau} = -1$. Importantly, option value does not always decrease as one gets closer to the expiry date. Although the loss of extrinsic (or time) value typically causes the option's value to decrease, this can be offset by other effects, such as the reduced impact of discounting as maturity approaches. For sufficiently deep in-the-money options, this effect can dominate, resulting in a positive theta.
+
+## Rho
+
+$$
+\rho := \dfrac{\partial V}{\partial r}
+$$
+
+$$
+\rho = S_te^{-q\tau}\frac{\partial d_1}{\partial r}\phi(d_1) + K\tau e^{-r\tau}\Phi(d_2) - Ke^{-r\tau}\phi(d_2)\frac{\partial d_2}{\partial r}
+$$
+
+and using identity $(1)$:
+
+$$
+\boxed{\rho = K\tau e^{-r\tau}\Phi(d_2)}
+$$
+
+Rho is typically expressed as the amount of money, per share of the underlying, that the value of the option will gain or lose as the risk-free interest rate rises or falls $1.0\%$ per annum
