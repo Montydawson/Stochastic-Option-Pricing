@@ -1,4 +1,4 @@
-# European Call pricing derivation 
+# European Call Pricing Derivation 
 ### Stock Price 
 
 To start we let Stock Price $S_t$ at time $t$ evolve according to the following SDE (Samuelson):
@@ -172,3 +172,17 @@ d_2=d_1-\sigma\sqrt{\tau}
 $$
 
 This is the Black-Scholes-Merton formula for a European call on a stock paying a continuous dividend yield $q$. Setting $q=0$ and $t=0$ gives the standard Black-Scholes-Merton formula above.
+
+# Limitations of Black-Scholes Model
+
+ - It assumes the terminal price of the underlying follows a log-normal distribution, and thus is always positive. Equivalently, log returns are normally distributed, giving the model thin tails compared with many empirical return distributions. In practice, these returns are often leptokurtic (sharper peak and fatter tails than normal distribution). As a result Black-Scholes can underestimate the probability of extreme price movements. A small error in estimating the probability of extreme price movements can have a disproportionate impact on the estimated risk of an option.
+
+ - Assumes constant volatility thus not explaining the 'volatility smile/skew'.
+
+ - Implied volatility is obtained by calibrating the Black–Scholes model to observed option prices. This is not an independent measure of volatility or evidence that the model is accurate, since the volatility is chosen to reproduce the observed price.
+
+ - Assumes idealised frictionless market: no transaction costs/fees and continuous trading and borrowing/lending.
+
+ - Assumes constant risk free rate.
+
+ - Limited to pricing European options.
