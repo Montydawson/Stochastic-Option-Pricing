@@ -61,6 +61,7 @@ d\nu_t dS_t &= \eta\rho\nu_tS_tdt
 $$
 
 Substituting in we get:
+
 $$
 dV_t = \left(\frac{\partial V}{\partial S}rS_t + \frac{\partial V}{\partial \nu}\lambda(\bar{\nu}-\nu_t) + \frac{\partial V}{\partial t}+ \frac{1}{2}\frac{\partial^2V}{\partial S^2}\nu_tS_t^2 + \frac{1}{2}\frac{\partial^2V}{\partial \nu^2}\eta^2\nu_t +\frac{\partial^2V}{\partial S\partial \nu}\eta\rho\nu_tS_t\right)dt + \frac{\partial V}{\partial S}\sqrt{\nu_t}S_tdZ^{(1)}_t + \frac{\partial V}{\partial \nu}\eta\sqrt{\nu_t}dZ^{(2)}_t 
 $$
