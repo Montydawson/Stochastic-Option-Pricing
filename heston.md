@@ -7,7 +7,7 @@ $$
 \begin{cases}
 dS_t = \mu_tS_tdt + \sqrt{\nu_t}S_tdZ^{(1)}_t \\
 d\nu_t = \lambda(\bar{\nu} - \nu_t)dt + \eta\sqrt{\nu_t}dZ^{(2)}_t \\
-\langle Z^{(1)}_t, Z^{(2)}_t \rangle = \rho dt
+\langle dZ^{(1)}_t, dZ^{(2)}_t \rangle = \rho dt
 \end{cases}
 $$
 
