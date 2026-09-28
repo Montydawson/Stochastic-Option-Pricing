@@ -93,10 +93,10 @@ $$
 where, for $j=0,1$, $P_j(x,\nu,\tau)$ is given by:
 
 $$
-P_j(x,\nu,\tau) = \frac{1}{2} + \frac{1}{\pi}\int_0^\infty \mathop\mathrm{{Re}}\left(\frac{\exp\{C_j(u,\tau)\bar{\nu} + D_j(u,\tau)\nu + iux\}}{iu}\right)du.
+P_j(x,\nu,\tau) = \frac{1}{2} + \frac{1}{\pi}\int_0^\infty \mathop{\mathrm{Re}}\left(\frac{\exp\{C_j(u,\tau)\bar{\nu} + D_j(u,\tau)\nu + iux\}}{iu}\right)du.
 $$
 
-Here, $u$ is the Fourier integration variable and $\mathop\mathrm{{Re}}$ denotes the real part. The functions $C_j(u,\tau)$ and $D_j(u,\tau)$ are given by:
+Here, $u$ is the Fourier integration variable and $\mathop{\mathrm{Re}}$ denotes the real part. The functions $C_j(u,\tau)$ and $D_j(u,\tau)$ are given by:
 
 $$
 C_j(u,\tau) = \lambda\left[r_-^{(j)}\tau - \frac{2}{\eta^2}\ln\left(\frac{1-g_j e^{-d_j\tau}}{1-g_j}\right)\right]
@@ -145,7 +145,7 @@ This integration can be performed using numerical methods.
 Numerical evaluation of the given semi-analytical solution proves complex. In Heston's paper the function $C$ is written as:
 
 $$
-C(u, \tau) = \lambda \left\{r_{+}\tau - \frac{2}{\eta^2}\ln\left(\dfrac{e^{d\tau} - g}{1 - g}\right) \right\}
+C(u, \tau) = \lambda \left(r_{+}\tau - \frac{2}{\eta^2}\ln\left(\dfrac{e^{d\tau} - g}{1 - g}\right) \right)
 $$
 
 This is algebraically equivalent to Gatheral's expression. However, when implementing numerical schemes they are not. Taking the principal branch in the above expression results in discontinuity jumps ecah time the imaginary part crosses the negative real axis, causing problems with numerical scheme implementation. Gatheral's expression seemingly removes this problem because it appears the argument never cuts the negative real axis. However, this is yet to be proven and remains a conjecture. To resolve this, we will use an approach given by Kahl and Jäckel $(2005)$.
@@ -161,13 +161,13 @@ $$
 where
 
 $$
-f_1(u)=\mathop\mathrm{{Re}}\left(\frac{e^{-iu\ln(K)}\phi(u-i)}{iuF}\right),
+f_1(u)=\mathop{\mathrm{Re}}\left(\frac{e^{-iu\ln(K)}\phi(u-i)}{iuF}\right),
 $$
 
 and
 
 $$
-f_2(u)=\mathop\mathrm{{Re}}\left(\frac{e^{-iu\ln(K)}\phi(u)}{iu}\right).
+f_2(u)=\mathop{\mathrm{Re}}\left(\frac{e^{-iu\ln(K)}\phi(u)}{iu}\right).
 $$
 
 Here,
@@ -226,27 +226,19 @@ The evaluation of $f_1(u)$ follows the same procedure, with $u$ replaced by $u-i
 The remaining semi-infinite integral can be transformed to a finite interval. Kahl and Jäckel show that, in practice, the calculations above can be combined into a single numerical integration for the undiscounted call price:
 
 $$
-\frac{C(S,K,\nu_0,\tau)}{P(\tau)}
-=
-\int_0^1y(x)dx,
+\frac{C(S,K,\nu_0,\tau)}{P(\tau)} = \int_0^1y(x)dx,
 $$
 
 where
 
 $$
-y(x):=
-\frac{1}{2}(F-K)
-+
-\frac{Ff_1(-\frac{\ln(x)}{C_\infty})-Kf_2(-\frac{\ln(x)}{C_\infty})}
-{x\pi C_\infty},
+y(x):= \frac{1}{2}(F-K) + \frac{Ff_1(-\frac{\ln(x)}{C_\infty})-Kf_2(-\frac{\ln(x)}{C_\infty})}{x\pi C_\infty},
 $$
 
 and
 
 $$
-C_\infty=
-\frac{\sqrt{1-\rho^2}}{\eta}
-\left(\nu_0+\lambda\bar{\nu}\tau\right).
+C_\infty = \frac{\sqrt{1-\rho^2}}{\eta}\left(\nu_0+\lambda\bar{\nu}\tau\right)
 $$
 
 The endpoint limits required for numerical integration are
@@ -258,12 +250,7 @@ $$
 and
 
 $$
-\lim_{x\to1}y(x)
-=
-\frac{1}{2}(F-K)
-+
-\frac{F\lim_{u\to0}f_1(u)-K\lim_{u\to0}f_2(u)}
-{\pi C_\infty}.
+\lim_{x\to1}y(x) = \frac{1}{2}(F-K) + \frac{F\lim_{u\to0}f_1(u)-K\lim_{u\to0}f_2(u)}{\pi C_\infty}
 $$
 
 with
