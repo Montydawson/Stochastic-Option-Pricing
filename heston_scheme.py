@@ -15,46 +15,73 @@ rho = -0.8
 tau = 10
 K = 2
 
-# Evaluate f_1:
-
+# f_1:
 def make_f_1(S, F, r, nu_0, nu_bar, lamb, eta, rho, tau, K):
 
     def f_1(u):
-        d = np.sqrt((rho*eta*u*1j - lamb)**2 + (eta**2)*(u*1j+u**2))
-        c = (lamb - rho*eta*u*1j+d) / (lamb - rho*eta*u*1j-d) 
-        t_c = np.anlge(c)
+        v = u - 1j
+        d = np.sqrt((rho*eta*v*1j - lamb)**2 + (eta**2)*(v*1j+v**2))
+        c = (lamb - rho*eta*v*1j+d) / (lamb - rho*eta*v*1j-d) 
+        t_c = np.angle(c)
         G_D = c - 1 
-        m = math.floor((t_c + math.pi) / 2*math.pi)
-        G_N = c*math.exp(d*tau) - 1
-        n  = math.floor((t_c + np.imag(d)*tau + math.pi) / (2*math.pi))
-        lnG = math.log(np.abs(G_N) / np.abs(G_D)) + 1j*(np.angle(G_N) - np.angle(G_D) + 2*math.pi*(n - m))
-        D = (lamb - rho*eta*u*1j + d)*(math.exp(d*tau) - 1) / ((eta**2)*(c*math.exp(d*tau) - 1))
-        C = (lamb*nu_bar)*((lamb - rho*eta*u*1j+d)*tau - 2*lnG)
-        phi = math.exp(C + D*nu_0 + 1j*u*math.log(F))
-        return np.real((math.exp(-1j*u*math.log(K))*phi) / (1j*u))
+        m = math.floor((t_c + np.pi) / (2*np.pi))
+        n  = math.floor((t_c + np.imag(d)*tau + np.pi) / (2*np.pi))
+        emach = np.finfo(np.float64).eps
+
+        if np.real(d)*tau > -np.log(emach):
+            lnG = np.log(np.abs(c)) + np.real(d)*tau - np.log(np.abs(G_D)) + 1j*(np.angle(c) + np.imag(d)*tau - np.angle(G_D) + 2*np.pi*(n - m))
+            D = (lamb - rho*eta*v*1j + d) / ((eta**2)*(c))
+
+        else:
+            G_N = c*np.exp(d*tau) - 1
+            lnG = np.log(np.abs(G_N) / np.abs(G_D)) + 1j*(np.angle(G_N) - np.angle(G_D) + 2*np.pi*(n - m))
+            D = (lamb - rho*eta*v*1j + d)*(np.exp(d*tau) - 1) / ((eta**2)*(c*np.exp(d*tau) - 1))
+        
+        C = (lamb*nu_bar)*((lamb - rho*eta*v*1j+d)*tau - 2*lnG) / (eta**2)
+        phi = np.exp(C + D*nu_0 + 1j*v*np.log(F))
+        return np.real((np.exp(-1j*u*np.log(K))*phi) / (1j*u*F))
     return f_1
 
 
-
-# f_2"
+# f_2:
 def make_f_2(S, F, r, nu_0, nu_bar, lamb, eta, rho, tau, K):
 
     def f_2(u):
         d = np.sqrt((rho*eta*u*1j - lamb)**2 + (eta**2)*(u*1j+u**2))
         c = (lamb - rho*eta*u*1j+d) / (lamb - rho*eta*u*1j-d) 
-        t_c = np.anlge(c)
+        t_c = np.angle(c)
         G_D = c - 1 
-        m = math.floor((t_c + np.pi) / 2*np.pi)
-        emach = np.finfo(np.float64).eps
-        #if np.real(d)*tau > -np.log(emach):
-
-        G_N = c*math.exp(d*tau) - 1
+        m = math.floor((t_c + np.pi) / (2*np.pi))
         n  = math.floor((t_c + np.imag(d)*tau + np.pi) / (2*np.pi))
-        lnG = np.log(np.abs(G_N) / np.abs(G_D)) + 1j*(np.angle(G_N) - np.angle(G_D) + 2*np.pi*(n - m))
-        D = (lamb - rho*eta*u*1j + d)*(np.exp(d*tau) - 1) / ((eta**2)*(c*np.exp(d*tau) - 1))
-        C = (lamb*nu_bar)*((lamb - rho*eta*u*1j+d)*tau - 2*lnG)
+        emach = np.finfo(np.float64).eps
+
+        if np.real(d)*tau > -np.log(emach):
+            lnG = np.log(np.abs(c)) + np.real(d)*tau - np.log(np.abs(G_D)) + 1j*(np.angle(c) + np.imag(d)*tau - np.angle(G_D) + 2*np.pi*(n - m))
+            D = (lamb - rho*eta*u*1j + d) / ((eta**2)*(c))
+
+        else:
+            G_N = c*np.exp(d*tau) - 1
+            lnG = np.log(np.abs(G_N) / np.abs(G_D)) + 1j*(np.angle(G_N) - np.angle(G_D) + 2*np.pi*(n - m))
+            D = (lamb - rho*eta*u*1j + d)*(np.exp(d*tau) - 1) / ((eta**2)*(c*np.exp(d*tau) - 1))
+        
+        C = (lamb*nu_bar)*((lamb - rho*eta*u*1j+d)*tau - 2*lnG) / (eta**2)
         phi = np.exp(C + D*nu_0 + 1j*u*np.log(F))
         return np.real((np.exp(-1j*u*np.log(K))*phi) / (1j*u))
     return f_2
 
+# integration endpoint limits:
+C_inf = ((np.sqrt(1 - (rho**2)))*(nu_0 + lamb*nu_bar*tau)) / eta
+a = (F - K) / 2
 
+if lamb == rho*eta:
+    imcdashm = (lamb*nu_bar*tau**2) / 4
+    imddashm = tau / 2
+
+else:
+    imcdashm = (np.exp((rho*eta - lamb)*tau)*lamb*nu_bar + lamb*nu_bar*((lamb - rho*eta)*tau - 1)) / (2*((lamb - rho*eta)**2))
+    imddashm = (1 - np.exp(-(lamb - rho*eta)*tau)) / (2*(lamb - rho*eta))
+
+imcdashz = -( (np.exp(-lamb*tau)*lamb*nu_bar + lamb*nu_bar*(lamb*tau - 1)) / (2*(lamb**2)) )
+imddashz = -( (1 - np.exp(-((lamb*tau) / 2))) / (2*lamb) )
+
+b =  (F - K) / 2  + (F*(np.log(F / K) + imcdashm + imddashm) - K*(np.log(F / K) + imcdashz + imddashz*nu_0)) / (np.pi*C_inf)
