@@ -29,7 +29,7 @@ def make_f_1(S, F, r, nu_0, nu_bar, lamb, eta, rho, tau, K):
         emach = np.finfo(np.float64).eps
 
         if np.real(d)*tau > -np.log(emach):
-            lnG = np.log(np.abs(c)) + np.real(d)*tau - np.log(np.abs(G_D)) + 1j*(np.angle(c) + np.imag(d)*tau - np.angle(G_D) + 2*np.pi*(n - m))
+            lnG = np.log(np.abs(c)) + np.real(d)*tau - np.log(np.abs(G_D)) + 1j*(np.angle(c) + np.imag(d)*tau - np.angle(G_D) - 2*np.pi*m)
             D = (lamb - rho*eta*v*1j + d) / ((eta**2)*(c))
 
         else:
@@ -56,7 +56,7 @@ def make_f_2(S, F, r, nu_0, nu_bar, lamb, eta, rho, tau, K):
         emach = np.finfo(np.float64).eps
 
         if np.real(d)*tau > -np.log(emach):
-            lnG = np.log(np.abs(c)) + np.real(d)*tau - np.log(np.abs(G_D)) + 1j*(np.angle(c) + np.imag(d)*tau - np.angle(G_D) + 2*np.pi*(n - m))
+            lnG = np.log(np.abs(c)) + np.real(d)*tau - np.log(np.abs(G_D)) + 1j*(np.angle(c) + np.imag(d)*tau - np.angle(G_D) - 2*np.pi*m)
             D = (lamb - rho*eta*u*1j + d) / ((eta**2)*(c))
 
         else:
@@ -84,4 +84,54 @@ else:
 imcdashz = -( (np.exp(-lamb*tau)*lamb*nu_bar + lamb*nu_bar*(lamb*tau - 1)) / (2*(lamb**2)) )
 imddashz = -( (1 - np.exp(-((lamb*tau) / 2))) / (2*lamb) )
 
-b =  (F - K) / 2  + (F*(np.log(F / K) + imcdashm + imddashm) - K*(np.log(F / K) + imcdashz + imddashz*nu_0)) / (np.pi*C_inf)
+# Slight 'typo' in kahl and jackel disagreeing with derivation of limit, this is correct:
+imddashz = -(1 - np.exp(-lamb * tau)) / (2 * lamb)
+
+
+b =  (F - K) / 2  + (F*(np.log(F / K) + imcdashm + imddashm*nu_0) - K*(np.log(F / K) + imcdashz + imddashz*nu_0)) / (np.pi*C_inf)
+
+# quadrature
+
+
+from scipy.special import roots_jacobi, eval_legendre
+
+def gauss_lobatto(N):
+    interior, _ = roots_jacobi(N - 1, 1, 1)
+    nodes = np.concatenate(([-1.0], interior, [1.0]))
+
+    weights = np.empty(N + 1)
+    weights[0] = weights[-1] = 2 / (N * (N + 1))
+
+    for i in range(1, N):
+        weights[i] = 2 / (N * (N + 1) * eval_legendre(N, nodes[i])**2)
+
+    return nodes, weights
+
+# integr
+
+f_1 = make_f_1(S, F, r, nu_0, nu_bar, lamb, eta, rho, tau, K)
+f_2 = make_f_2(S, F, r, nu_0, nu_bar, lamb, eta, rho, tau, K)
+
+def y(x):
+    if x == 0:
+        return a
+    elif x == 1:
+        return b
+    else:
+        u = -np.log(x) / C_inf
+        return (F - K) / 2 + (F * f_1(u) - K * f_2(u)) / (x * np.pi * C_inf)
+
+
+# Gauss-Lobatto evaluationd
+
+def heston_price(N):
+    nodes, weights = gauss_lobatto(N)
+
+    x = (nodes + 1) / 2
+    x[0] = 0.0
+    x[-1] = 1.0
+
+    y_values = np.array([y(x_i) for x_i in x])
+    integral = 0.5 * np.sum(weights * y_values)
+
+    return np.exp(-r * tau) * integral

@@ -31,12 +31,13 @@ $$
 2\lambda \bar{\nu} > \eta^{2}
 $$
 
-
 ### Explanation of parameters and modelling choices:
-Under this model the variance process follows a mean-reverting Cox-Ingersoll-Ross (CIR) process, there are currently no closed-form solutions to this however it can be converted into an additive noise SDE via a Lamperti transform. Modelling the volatility as a mean-reverting process is desirable and reflective of the behaviour observed in markets. 
+
+Under this model the variance process follows a mean-reverting Cox-Ingersoll-Ross (CIR) process, there are currently no closed-form solutions to this however it can be converted into an additive noise SDE via a Lamperti transform. Modelling the volatility as a mean-reverting process is desirable and reflective of the behaviour observed in markets.
 
 ## Sketch of Solution Derivation
-Under stochastic volatility models, volatility itself is stochastic and so contributes to additional uncertainty. An option is therefore exposed not only to movements in the underlying asset, but also to unexpected changes in its volatility. Mathematically, a 'price of volatility risk' emerges: the compensation associated with exposure to this additional source of risk. Since the volatility risk factor is not traded, this risk cannot be completely hedged using the underlying asset and the risk-free asset. Therefore, the market is incomplete, so the risk-neutral measure is not unique, and the behaviour of volatility is different under different probability measures.<br> 
+
+Under stochastic volatility models, volatility itself is stochastic and so contributes to additional uncertainty. An option is therefore exposed not only to movements in the underlying asset, but also to unexpected changes in its volatility. Mathematically, a 'price of volatility risk' emerges: the compensation associated with exposure to this additional source of risk. Since the volatility risk factor is not traded, this risk cannot be completely hedged using the underlying asset and the risk-free asset. Therefore, the market is incomplete, so the risk-neutral measure is not unique, and the behaviour of volatility is different under different probability measures.<br>
 
 It is essential to consider which probability measure the model is defined under. In Heston's $1993$ paper, the market price of volatility risk is modelled as linear in $\nu$, motivated by the consumption-based model of Breeden $(1979)$ and the general equilibrium model of Cox, Ingersoll, and Ross $(1985)$. This preserves the form of the proposed model when changing from the statistical/real-world measure to the risk-neutral measure. Heston notes that the resulting pricing equations are obtained by arbitrage and do not depend on the other assumptions of these models. <br>
 
@@ -256,7 +257,7 @@ $$
 with
 
 $$
-\lim_{u\to0}f_1(u) = \ln \left(\frac{F}{K}\right) + \mathop{\mathrm{Im}}(C'(-i)) + \mathop{\mathrm{Im}}(D'(0))
+\lim_{u\to0}f_1(u) = \ln \left(\frac{F}{K}\right) + \mathop{\mathrm{Im}}(C'(-i)) + \mathop{\mathrm{Im}}(D'(-i))V_0
 $$
 
 where
@@ -298,7 +299,7 @@ $$
 and
 
 $$
-\mathop{\mathrm{{Im}}}(D'(0))=-\frac{1-e^{-\frac{1}{2}\lambda\tau}}{2\lambda}.
+\mathop{\mathrm{{Im}}}(D'(0))=-\frac{1-e^{-\lambda\tau}}{2\lambda}.
 $$
 
 This converts the original semi-infinite integration problem into the evaluation of a single integral over the finite interval $[0,1]$. Gauss-Lobatto quadrature can then be used to numerically evaluate this integral.
