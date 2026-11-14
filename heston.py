@@ -62,26 +62,66 @@ def make_f_2(F, K, lamb, nu_bar, eta, tau, nu_0, rho):
     return f_2
 
 def make_y(F, K, lamb, nu_bar, eta, tau, nu_0, rho):
+    # integration endpoint limits:
+    C_inf = ((np.sqrt(1 - (rho**2)))*(nu_0 + lamb*nu_bar*tau)) / eta
+    a = (F - K) / 2
+
+    imcdashm = 1
+    imddashm = 1
+    if lamb == rho*eta:
+        imcdashm = (lamb*nu_bar*tau**2) / 4
+        imddashm = tau / 2
+
+    else:
+        imcdashm = (np.exp((rho*eta - lamb)*tau)*lamb*nu_bar + lamb*nu_bar*((lamb - rho*eta)*tau - 1)) / (2*((lamb - rho*eta)**2))
+        imddashm = (1 - np.exp(-(lamb - rho*eta)*tau)) / (2*(lamb - rho*eta))
+
+    imcdashz = -( (np.exp(-lamb*tau)*lamb*nu_bar + lamb*nu_bar*(lamb*tau - 1)) / (2*(lamb**2)) )
+    # Slight 'typo' in kahl and jackel disagreeing with derivation of limit, this is correct:
+    imddashz = -(1 - np.exp(-lamb * tau)) / (2 * lamb)
+
+    b =  (F - K) / 2  + (F*(np.log(F / K) + imcdashm + imddashm*nu_0) - K*(np.log(F / K) + imcdashz + imddashz*nu_0)) / (np.pi*C_inf)
+    
+    f_1 = make_f_1(F, K, lamb, nu_bar, eta, tau, nu_0, rho)
+    f_2 = make_f_2(F, K, lamb, nu_bar, eta, tau, nu_0, rho)
 
     def y(x):
-        # integration endpoint limits:
-        C_inf = ((np.sqrt(1 - (rho**2)))*(nu_0 + lamb*nu_bar*tau)) / eta
-        a = (F - K) / 2
-
-
-        imcdashm = 1
-        imddashm = 1
-        if lamb == rho*eta:
-            imcdashm = (lamb*nu_bar*tau**2) / 4
-            imddashm = tau / 2
-
+        if x == 0:
+            return a
+        elif x == 1:
+            return b
         else:
-            imcdashm = (np.exp((rho*eta - lamb)*tau)*lamb*nu_bar + lamb*nu_bar*((lamb - rho*eta)*tau - 1)) / (2*((lamb - rho*eta)**2))
-            imddashm = (1 - np.exp(-(lamb - rho*eta)*tau)) / (2*(lamb - rho*eta))
+            u = -np.log(x) / C_inf
+            return (F - K) / 2 + (F * f_1(u) - K * f_2(u)) / (x * np.pi * C_inf)
 
-        imcdashz = -( (np.exp(-lamb*tau)*lamb*nu_bar + lamb*nu_bar*(lamb*tau - 1)) / (2*(lamb**2)) )
-        # Slight 'typo' in kahl and jackel disagreeing with derivation of limit, this is correct:
-        imddashz = -(1 - np.exp(-lamb * tau)) / (2 * lamb)
+    return y
 
-        b =  (F - K) / 2  + (F*(np.log(F / K) + imcdashm + imddashm*nu_0) - K*(np.log(F / K) + imcdashz + imddashz*nu_0)) / (np.pi*C_inf)
-        
+
+from scipy.special import roots_jacobi, eval_legendre
+
+def gauss_lobatto(N):
+    interior, _ = roots_jacobi(N - 1, 1, 1)
+    nodes = np.concatenate(([-1.0], interior, [1.0]))
+
+    weights = np.empty(N + 1)
+    weights[0] = weights[-1] = 2 / (N * (N + 1))
+
+    for i in range(1, N):
+        weights[i] = 2 / (N * (N + 1) * eval_legendre(N, nodes[i])**2)
+
+    return nodes, weights
+
+def heston_price(N, F, K, lamb, nu_bar, eta, tau, nu_0, rho, r):
+
+    y = make_y(F, K, lamb, nu_bar, eta, tau, nu_0, rho)
+
+    nodes, weights = gauss_lobatto(N)
+
+    x = (nodes + 1) / 2
+    x[0] = 0.0
+    x[-1] = 1.0
+
+    y_values = np.array([y(x_i) for x_i in x])
+    integral = 0.5 * np.sum(weights * y_values)
+
+    return np.exp(-r * tau) * integral
